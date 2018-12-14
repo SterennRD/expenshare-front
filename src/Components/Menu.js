@@ -14,10 +14,10 @@ class Menu extends Component {
                 <Navbar>
                     <NavbarBrand>Expenshare</NavbarBrand>
                     <Nav>
-                        <NavItem className="mr-2"><Link to="/" classeName="nav-link">Home</Link></NavItem>
+                        <NavItem className="mr-2"><Link to="/">Home</Link></NavItem>
+                        <NavItem className="mr-2"><Link to="/group">Group</Link></NavItem>
                     </Nav>
                 </Navbar>
-
             </div>
         );
     }
