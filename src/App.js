@@ -5,13 +5,15 @@ import {Container} from 'reactstrap';
 import {Route} from 'react-router-dom';
 import Menu from "./Components/Menu";
 import FormShareGroup from "./Components/FormShareGroup";
+import ShareGroup from "./Components/ShareGroup";
 
 class App extends Component {
   render() {
     return (
         <Container>
-            <Route path="/" component={Menu} />
-            <Route path="/group" component={FormShareGroup}/>
+            <Menu/>
+            <Route exact path="/group" component={FormShareGroup}/>
+            <Route exact path="/group/:id" component={ShareGroup}/>
         </Container>
     );
   }

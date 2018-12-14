@@ -1,10 +1,16 @@
 import React, {Component} from 'react';
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap';
+import { Redirect, Route, Link } from "react-router-dom";
+import ShareGroup from "./ShareGroup";
 
 class FormShareGroup extends Component {
     constructor(props) {
         super(props);
-        this.state = { groups : [], value: '' };
+        this.state = {
+            groups : [],
+            value: '',
+            redirect: ''
+        };
         this.handleChange = this.handleChange.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
@@ -32,8 +38,11 @@ class FormShareGroup extends Component {
             for (let i = 0; i < this.state.groups.length; ++i) {
                 if (this.state.groups[i].slug == this.state.value) {
                     alert('ça correspond');
+                    this.setState({ redirect: true });
+                    return;
                 } else {
                     alert('Aucun groupe ne correspond à ce nom');
+                    return;
                 }
             }
         } else {
@@ -57,7 +66,6 @@ class FormShareGroup extends Component {
     }
 
 
-
     render() {
         if (this.state.groups.length === 0) {
             return <div>Chargement en cours...</div>
@@ -65,6 +73,10 @@ class FormShareGroup extends Component {
 
         const groups = this.state.groups.map((group) => <div key={group.id}>{group.slug}</div>);
 
+        if (this.state.redirect == true) {
+            //return <Redirect to={`/group/${this.state.value}`}/>;
+            return <Redirect to={"/group/" + this.state.value} component={ShareGroup} />;
+        }
         return (
             <div>
                 {groups}
