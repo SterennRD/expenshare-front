@@ -74,7 +74,6 @@ class FormShareGroup extends Component {
         const groups = this.state.groups.map((group) => <div key={group.id}>{group.slug}</div>);
 
         if (this.state.redirect == true) {
-            //return <Redirect to={`/group/${this.state.value}`}/>;
             return <Redirect to={"/group/" + this.state.value} component={ShareGroup} />;
         }
         return (

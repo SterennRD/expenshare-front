@@ -13,7 +13,7 @@ class App extends Component {
         <Container>
             <Menu/>
             <Route exact path="/group" component={FormShareGroup}/>
-            <Route exact path="/group/:id" component={ShareGroup}/>
+            <Route path="/group/:id" component={ShareGroup}/>
         </Container>
     );
   }
