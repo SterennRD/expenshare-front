@@ -12,8 +12,9 @@ class MenuGroup extends Component {
         return (
             <Navbar>
                 <Nav>
-                    <NavItem className="mr-2"><Link to={`${this.props.match.url}/persons`}>Personnes</Link></NavItem>
-                    <NavItem className="mr-2"><Link to={`${this.props.match.url}/expenses`}>Dépenses</Link></NavItem>
+                    <NavItem className="mr-2"><Link to={`${this.props.url}/`}>Dashboard</Link></NavItem>
+                    <NavItem className="mr-2"><Link to={`${this.props.url}/persons`}>Personnes</Link></NavItem>
+                    <NavItem className="mr-2"><Link to={`${this.props.url}/expenses`}>Dépenses</Link></NavItem>
                 </Nav>
             </Navbar>
         );

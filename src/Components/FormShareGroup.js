@@ -6,7 +6,10 @@ import ShareGroup from "./ShareGroup";
 class FormShareGroup extends Component {
     constructor(props) {
         super(props);
-        this.state = { slug: "", sharegroup: null };
+        this.state = {
+            slug: "",
+            sharegroup: null
+        };
     }
 
     handleChange(event) {

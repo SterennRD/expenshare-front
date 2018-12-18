@@ -27,29 +27,21 @@ class ListPersons extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        if (this.state.firstname.trim().length && this.state.lastname.trim().length) {
-            fetch("http://localhost/dcdev/php/expenshare/public/person/new" + this.state.value, {
-                method: "POST",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    firstname: this.state.firstname,
-                    lastname: this.state.lastname
-                })
+        fetch('http://localhost/dcdev/php/expenshare/public/person/', {
+            method: 'POST',
+            body: JSON.stringify({
+                firstname: this.state.firstname,
+                lastname: this.state.lastname,
+                sharegroup: JSON.parse(this.props.group).id
             })
-                .then((response) => {
-                    response.json();
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        } else {
-            alert('entrez un nom');
-        }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('Nouvel utilisateur ajouté !');
+            })
+            .catch(err => console.log(err))
+        ;
     }
 
     id() {
@@ -105,6 +97,7 @@ class ListPersons extends Component {
 
 
         console.log(filteredPersons);
+        console.log(JSON.parse(this.props.group).id);
         return (
             <div>
                 <h1>Personnes</h1>

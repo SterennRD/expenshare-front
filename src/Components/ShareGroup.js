@@ -3,6 +3,7 @@ import ListExpenses from "./ListExpenses";
 import { Route, Link, Switch,BrowserRouter } from 'react-router-dom';
 import ListPersons from "./ListPersons";
 import { Navbar, Nav, NavItem, NavbarBrand } from 'reactstrap';
+import MenuGroup from "./MenuGroup";
 
 class ShareGroup extends Component {
     constructor(props) {
@@ -10,7 +11,8 @@ class ShareGroup extends Component {
         this.state = {
             group: [],
             expenses: [],
-            expensesList: []
+            expensesList: [],
+            persons: []
         }
     }
 
@@ -23,6 +25,15 @@ class ShareGroup extends Component {
         })
             .then(response => response.json())
             .then(data => this.setState({group : data}))
+        ;
+        fetch('http://localhost/dcdev/php/expenshare/public/person/' + this.props.match.params.id, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => this.setState({persons : data}))
         ;
         fetch('http://localhost/dcdev/php/expenshare/public/expense/' + this.props.match.params.id, {
             method: 'GET',
@@ -45,23 +56,16 @@ class ShareGroup extends Component {
     }
 
     render() {
-
-
-        const persons = this.state.group.map((person) => <div key={person.id}>{person.firstname}</div>);
+        const persons = this.state.persons.map((person) => <div key={person.id}>{person.firstname}</div>);
+        console.log(this.state.group);
         return (
             <BrowserRouter>
             <div>
                 <h1>{this.props.match.params.id} {this.props.id}</h1>
-                <Navbar>
-                    <Nav>
-                        <NavItem className="mr-2"><Link to={`${this.props.match.url}/`}>Dashboard</Link></NavItem>
-                        <NavItem className="mr-2"><Link to={`${this.props.match.url}/persons`}>Personnes</Link></NavItem>
-                        <NavItem className="mr-2"><Link to={`${this.props.match.url}/expenses`}>Dépenses</Link></NavItem>
-                    </Nav>
-                </Navbar>
+                <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons id={this.state.group.id} expenses={this.state.expensesList} persons={this.state.group}/>} />
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons id={this.state.group.id} expenses={this.state.expensesList} persons={this.state.persons} group={this.state.group}/>} />
                     <Route path={`${this.props.match.path}/expenses`} render={()=><ListExpenses expenses={this.state.expenses}/>} />
                 </Switch>
             </div>
