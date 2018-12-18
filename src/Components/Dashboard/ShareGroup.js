@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import ListExpenses from "./ListExpenses";
+import ListExpenses from "../Expenses/ListExpenses";
 import { Route, Link, Switch,BrowserRouter } from 'react-router-dom';
-import ListPersons from "./ListPersons";
+import ListPersons from "../Persons/ListPersons";
 import { Navbar, Nav, NavItem, NavbarBrand } from 'reactstrap';
-import MenuGroup from "./MenuGroup";
+import MenuGroup from "../MenuGroup";
 
 class ShareGroup extends Component {
     constructor(props) {
@@ -42,7 +42,9 @@ class ShareGroup extends Component {
             }
         })
             .then(response => response.json())
-            .then(data => this.setState({expenses : data}))
+            .then(data => {
+                this.setState({expenses : data})
+            })
         ;
         fetch('http://localhost/dcdev/php/expenshare/public/expense/liste/' + this.props.match.params.id, {
             method: 'GET',
@@ -65,8 +67,8 @@ class ShareGroup extends Component {
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons expenses={this.state.expensesList} persons={this.state.persons} id={this.state.group.id}/>} />
-                    <Route path={`${this.props.match.path}/expenses`} render={()=><ListExpenses expenses={this.state.expenses}/>} />
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons expensesList={this.state.expenses} expenses={this.state.expensesList} persons={this.state.persons} id={this.state.group.id}/>} />
+                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} expenses={this.state.expenses} persons={this.state.persons}/>} />
                 </Switch>
             </div>
             </BrowserRouter>

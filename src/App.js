@@ -6,7 +6,7 @@ import {Container} from 'reactstrap';
 import {Route} from 'react-router-dom';
 import Menu from "./Components/Menu";
 import FormShareGroup from "./Components/FormShareGroup";
-import ShareGroup from "./Components/ShareGroup";
+import ShareGroup from "./Components/Dashboard/ShareGroup";
 
 class App extends Component {
   render() {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap';
 import { Redirect, Route, Link } from "react-router-dom";
-import ShareGroup from "./ShareGroup";
+import ShareGroup from "./Dashboard/ShareGroup";
 
 class FormShareGroup extends Component {
     constructor(props) {
