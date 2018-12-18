@@ -32,7 +32,7 @@ class ListPersons extends Component {
             body: JSON.stringify({
                 firstname: this.state.firstname,
                 lastname: this.state.lastname,
-                sharegroup: JSON.parse(this.props.group).id
+                sharegroup: this.props.id
             })
         })
             .then(response => response.json())
@@ -44,60 +44,25 @@ class ListPersons extends Component {
         ;
     }
 
-    id() {
-        for (let i = 0; i < this.props.persons.length; ++i) {
-            console.log(this.props.expenses[i]);
-            this.setState({id: [...this.state.id, 1]})
-        }
-    }
-
     render() {
-        // const expenses = this.state.expenses.filter(expense => {
-        //         let result = false;
-        //         for (let i = 0; i < this.props.persons.length; ++i) {
-        //             if (this.props.persons[i].id == expense.person.id) {
-        //                 result = true;
-        //             }
-        //         }
-        //         return result;
-        //     }
-        // );
-        // const realExpense = expenses.map((expense) => <div key={expense.id}>{expense.title + ' ' + expense.amount}</div>);
-
-        // if (this.state.expenses.length === 0) {
-        //     return <div>Chargement en cours...</div>
-        // }
         const persons = this.props.persons.map((person) =>
-
             <div key={person.id}>{person.firstname + ' ' + person.lastname}</div>
         );
 
-        if (this.props.expenses.length === 0) {
+        if (this.props.persons.length === 0) {
             return <div>Chargement en cours...</div>
         }
         const expenses = this.props.expenses.map((expense) => <div key={expense[0].id}>{expense[0].person.firstname + ' ' + expense[0].person.lastname} a payé {expense.somme} €</div>)
-        // const personNoPay = this.props.persons.filter((person) => {
-        //     let value = [];
-        //     for (let i = 0; i < this.props.expenses.length ; ++ i) {
-        //         console.log();
-        //
-        //         let newValue = this.props.expenses[i][0].person.id;
-        //         value.push(newValue);
-        //         console.log(value);
-        //     }
-        // });
-
-        //const filteredPersons = this.props.persons.filter(e => e.id !== this.props.expenses[0].person.id);
-        const filteredPersons = this.props.persons.filter(e => {
-            for (let i = 0; i < this.props.persons.length ; ++ i) {
-                console.log(this.props.expenses[i][0].person.id);
-                return e.id !== this.props.expenses[i][0].person.id;
-            }
-        });
 
 
-        console.log(filteredPersons);
-        console.log(JSON.parse(this.props.group).id);
+        let ids = [];
+        for (let i = 0; i < this.props.expenses.length; i++) {
+            ids.push(this.props.expenses[i][0].person.id);
+        }
+        let filteredPersons = this.props.persons.filter(person => !ids.includes(person.id)).map(e => <div key={e.id}>{e.firstname + ' ' + e.lastname} a payé 0€</div>);
+
+
+
         return (
             <div>
                 <h1>Personnes</h1>
@@ -112,7 +77,7 @@ class ListPersons extends Component {
                     </FormGroup>
                     <Button className="m-1" color="primary">Ajouter</Button>
                 </Form>
-                {persons}
+                {filteredPersons}
 
                 {expenses}
             </div>

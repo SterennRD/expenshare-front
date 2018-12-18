@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import {Container} from 'reactstrap';
 import {Route} from 'react-router-dom';
 import Menu from "./Components/Menu";

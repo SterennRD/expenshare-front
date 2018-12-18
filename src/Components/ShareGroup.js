@@ -24,7 +24,7 @@ class ShareGroup extends Component {
             }
         })
             .then(response => response.json())
-            .then(data => this.setState({group : data}))
+            .then(data => this.setState({group : JSON.parse(data)}))
         ;
         fetch('http://localhost/dcdev/php/expenshare/public/person/' + this.props.match.params.id, {
             method: 'GET',
@@ -57,7 +57,7 @@ class ShareGroup extends Component {
 
     render() {
         const persons = this.state.persons.map((person) => <div key={person.id}>{person.firstname}</div>);
-        console.log(this.state.group);
+
         return (
             <BrowserRouter>
             <div>
@@ -65,7 +65,7 @@ class ShareGroup extends Component {
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons id={this.state.group.id} expenses={this.state.expensesList} persons={this.state.persons} group={this.state.group}/>} />
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons expenses={this.state.expensesList} persons={this.state.persons} id={this.state.group.id}/>} />
                     <Route path={`${this.props.match.path}/expenses`} render={()=><ListExpenses expenses={this.state.expenses}/>} />
                 </Switch>
             </div>

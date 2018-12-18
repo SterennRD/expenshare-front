@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import moment from 'moment/min/moment-with-locales.min';
 
 class ListExpenses extends Component {
     constructor(props) {
@@ -37,7 +38,8 @@ class ListExpenses extends Component {
         // if (this.state.expenses.length === 0) {
         //     return <div>Chargement en cours...</div>
         // }
-        const expenses = this.props.expenses.map((expense) => <div key={expense.id}><b>{expense.person.firstname + ' ' + expense.person.lastname}</b> {expense.title + ' ' + expense.amount} {expense.category.label}</div>);
+        moment.locale('fr');
+        const expenses = this.props.expenses.map((expense) => <div key={expense.id}><b>{expense.title} ({expense.amount}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).startOf('day').fromNow()} <i className={'fas ' + expense.category.icon}></i></div>);
 
         const a = this.props.expenses.map((expense) => {
             let total = 0;
@@ -47,7 +49,7 @@ class ListExpenses extends Component {
             }
             return total;
         });
-
+        console.log(this.props.expenses);
 
 
         return (
