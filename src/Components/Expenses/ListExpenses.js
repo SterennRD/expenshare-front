@@ -70,11 +70,12 @@ class ListExpenses extends Component {
         this.props.addExpense(data);
     }
 
-
-
     getData(data) {
-        console.log(data);
         this.props.addExpense(data);
+    }
+
+    getData2(data) {
+        this.props.updateExpense(data);
     }
 
 
@@ -97,7 +98,7 @@ class ListExpenses extends Component {
         // AFFICHAGE DES DEPENSES
         const expenses = this.props.expenses.map((expense) =>
             <div className="d-flex" key={expense.id}>
-                <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({expense.amount}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).startOf('hour').fromNow()} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
+                <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({expense.amount}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).format('LLL')} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
                 <Link to={this.props.match.url + '/edit'} onClick={(e) => this.handleEdit(e,expense.id, expense.amount, expense.person.id, expense.category.id, expense.title)} className="btn btn-secondary align-self-center ml-2">Modifier</Link>
                 <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2">Supprimer</Button>
             </div>);
@@ -113,8 +114,8 @@ class ListExpenses extends Component {
                 <h1>Les dépenses</h1>
                 <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
                 <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} slug={this.props.match.params.id} persons={this.props.persons} getData={data => this.getData(data)} />} />
-                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} url={this.props.match.url} persons={this.props.persons} getData={data => this.getData(data)} addExpense={data => this.addExpense(data)}/>} />
-                <div>Le total est {total} €</div>
+                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} url={this.props.match.url} persons={this.props.persons} getData2={data => this.getData2(data)} />} />
+                <div>Le total est <b>{total} €</b></div>
                 {expenses}
             </div>
         );

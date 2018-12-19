@@ -23,7 +23,6 @@ class FormExpense extends Component {
                 person: props.data.person,
                 category: props.data.category
             });
-            console.log("j'ajoute les données")
         }
     }
 
@@ -95,7 +94,7 @@ class FormExpense extends Component {
                 .then(data => {
                     console.log(data);
                     alert('Dépense modifiée !');
-                    //this.setState({redirect: true});
+                    this.props.getData2(data);
                 })
                 .catch(err => console.log(err))
             ;
