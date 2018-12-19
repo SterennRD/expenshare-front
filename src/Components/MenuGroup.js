@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Navbar, Nav, NavItem, NavbarBrand } from 'reactstrap';
-import {Link} from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 
 class MenuGroup extends Component {
     constructor(props) {
@@ -10,11 +10,11 @@ class MenuGroup extends Component {
 
     render() {
         return (
-            <Navbar>
+            <Navbar className="border rounded p-3">
                 <Nav>
-                    <NavItem className="mr-2"><Link to={`${this.props.url}/`}>Dashboard</Link></NavItem>
-                    <NavItem className="mr-2"><Link to={`${this.props.url}/persons`}>Personnes</Link></NavItem>
-                    <NavItem className="mr-2"><Link to={`${this.props.url}/expenses`}>Dépenses</Link></NavItem>
+                    <NavLink activeClassName="text-dark" className="mr-2" to={`${this.props.url}/`}>Dashboard</NavLink>
+                    <NavLink activeClassName="text-dark" className="mr-2" to={`${this.props.url}/persons`}>Personnes</NavLink>
+                    <NavLink activeClassName="text-dark" className="mr-2" to={`${this.props.url}/expenses`}>Dépenses</NavLink>
                 </Nav>
             </Navbar>
         );

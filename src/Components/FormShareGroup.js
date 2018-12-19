@@ -53,9 +53,9 @@ class FormShareGroup extends Component {
         return (
             <div className="d-flex flex-column">
                 <h2>Rentrez l'identifiant d'un groupe</h2>
-                <input type="text" value={this.state.slug} onChange={e => this.handleChange(e)} placeholder="Group ID"/>
+                <input className="p-1 mb-2" type="text" value={this.state.slug} onChange={e => this.handleChange(e)} placeholder="Group ID"/>
                 <div>
-                    <Button onClick={e => this.handleCreate(e)} color="primary">Creér</Button>
+                    <Button onClick={e => this.handleCreate(e)} color="primary" className="mr-2">Creér</Button>
                     <Button onClick={e => this.handleOpen(e)} color="primary">Ouvrir</Button>
                 </div>
             </div>
