@@ -4,6 +4,8 @@ import { Route, Link, Switch,BrowserRouter } from 'react-router-dom';
 import ListPersons from "../Persons/ListPersons";
 import { Navbar, Nav, NavItem, NavbarBrand } from 'reactstrap';
 import MenuGroup from "../MenuGroup";
+import FormExpense from "../Expenses/FormExpense";
+
 
 class ShareGroup extends Component {
     constructor(props) {
@@ -57,9 +59,31 @@ class ShareGroup extends Component {
         ;
     }
 
+    // ACTUALISER A LA SUPPRESSION D'UN ITEM
+    deleteItem(id) {
+        this.setState(prevState=>{
+            const newExpenses = prevState.expenses.filter((expense)=>expense.id!==id);
+            return {
+                expenses: newExpenses
+            }
+        })
+    }
+
+    // ACTUALISER A L'AJOUT D'UN ITEM
+    addExpense(data) {
+        let { expenses } = this.state.expenses;
+        expenses.push(data);
+        //This will trigger a rerender and the PostList will
+        //receive the new posts list.
+        console.log(data);
+        this.setState({expenses: expenses});
+    }
+
+
+
     render() {
         const persons = this.state.persons.map((person) => <div key={person.id}>{person.firstname}</div>);
-
+        let { expenses } = this.state.expenses;
         return (
             <BrowserRouter>
             <div>
@@ -67,8 +91,8 @@ class ShareGroup extends Component {
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons expensesList={this.state.expenses} expenses={this.state.expensesList} persons={this.state.persons} id={this.state.group.id}/>} />
-                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} expenses={this.state.expenses} persons={this.state.persons}/>} />
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expensesList={this.state.expenses} expenses={this.state.expensesList} persons={this.state.persons} id={this.state.group.id}/>} />
+                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} deleteItem={id => this.deleteItem(id)} addExpense={data => this.addExpense(data)}/>} />
                 </Switch>
             </div>
             </BrowserRouter>

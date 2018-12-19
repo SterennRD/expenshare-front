@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, FormGroup, Label, Input, Button} from 'reactstrap';
+import {Form, FormGroup, Label, Input, Button, Card} from 'reactstrap';
 
 class ListPersons extends Component {
     constructor(props) {
@@ -16,7 +16,10 @@ class ListPersons extends Component {
     }
 
     componentDidMount() {
-
+        fetch('http://localhost/dcdev/php/expenshare/public/person/group/' + this.props.slug)
+            .then(response => response.json())
+            .then(data => this.setState({ persons: data }))
+        ;
     }
 
     handleChange(event) {
@@ -53,43 +56,24 @@ class ListPersons extends Component {
     }
 
     render() {
-        const persons = this.props.persons.map((person) =>
-            <div key={person.id}>{person.firstname + ' ' + person.lastname}</div>
-        );
 
-        if (this.props.persons.length === 0) {
-            return <div>Chargement en cours...</div>
-        }
-        const expenses = this.props.expenses.map((expense) => {
-            let depense = '';
-            if (expense.nb_paie > 1) {
-                return <div key={expense[0].id}>{expense[0].person.firstname + ' ' + expense[0].person.lastname} a payé {expense.somme} € ({expense.nb_paie} dépenses)</div>
-            } else {
-                return <div key={expense[0].id}>{expense[0].person.firstname + ' ' + expense[0].person.lastname} a payé {expense.somme} € ({expense.nb_paie} dépense)</div>
-            }
+        const persons = this.state.persons.map(person => {
+            let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
+                if (person.expenses.length > 1) {
+                    return <Card className="p-2 mb-1" key={person.id}>{person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépenses)</Card>
+                } else {
+                    return <Card className="p-2 mb-1" key={person.id}>{person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépense)</Card>
+                }
         });
 
+        console.log(this.state.persons);
 
-        let ids = [];
-        for (let i = 0; i < this.props.expenses.length; i++) {
-            ids.push(this.props.expenses[i][0].person.id);
+        if (this.state.persons.length === 0) {
+            return <div>Chargement en cours...</div>
         }
-        // let b = {};
-        //
-        // this.props.expensesList.forEach(el => {
-        //     b[el.person.id] = (b[el.person.id] || 0) + 1;
-        // });
 
-        let filteredPersons = this.props.persons.filter(person => !ids.includes(person.id)).map(e => <div key={e.id}>{e.firstname + ' ' + e.lastname} a payé 0€ (0 dépenses)</div>);
-        var sorted_persons = this.props.expenses.sort((a,b) => {
-            return a.somme -
-                b.somme
-        }).reverse();
 
-        const sorted_name = this.props.persons.sort((a,b) => {
-            return a.lastname -
-                b.lastname
-        }).reverse();
+
 
         return (
             <div>
@@ -105,8 +89,9 @@ class ListPersons extends Component {
                     </FormGroup>
                     <Button className="m-1" color="primary">Ajouter</Button>
                 </Form>
-                {expenses}
-                {filteredPersons}
+
+                <h2>Liste des personnes</h2>
+                    {persons}
             </div>
         );
     }

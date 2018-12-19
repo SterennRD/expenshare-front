@@ -10,61 +10,112 @@ class ListExpenses extends Component {
         super(props);
         this.state = {
             expenses: [],
-            persons: this.props.persons
+            persons: this.props.persons,
+            editForm:
+                {
+                    id: '',
+                    amount: '',
+                    person: '',
+                    category: '',
+                    title: ''
+                },
+            deleted: false
         };
+        this.handleEdit = this.handleEdit.bind(this);
     }
 
     componentDidMount() {
 
     }
 
-    handleEdit(id) {
-        console.log(id);
+
+
+    // FONCTION EDITER
+    handleEdit(e, id, amount, person, category, title) {
+        this.setState({editForm:
+                {
+                    id: id,
+                    amount: amount,
+                    person: person,
+                    category: category,
+                    title: title
+                }
+            }, () => {
+            console.log(this.state.editForm);
+        });
+        window.scrollTo(0, 250);
+
     }
+
+    // FONCTION SUPPRIMER
+    handleDelete(id) {
+        fetch('http://localhost/dcdev/php/expenshare/public/expense/', {
+            method: 'DELETE',
+            body: JSON.stringify({
+                id: parseInt(id)
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('Dépense supprimée !');
+                this.setState({deleted: true});
+                this.props.deleteItem(id);
+            })
+            .catch(err => console.log(err))
+        ;
+    }
+
+    addExpense(data) {
+        this.props.addExpense(data);
+    }
+
+
+
+    getData(data) {
+        console.log(data);
+        this.props.addExpense(data);
+    }
+
+
     render() {
-        // const expenses = this.state.expenses.filter(expense => {
-        //         let result = false;
-        //         for (let i = 0; i < this.props.persons.length; ++i) {
-        //             if (this.props.persons[i].id == expense.person.id) {
-        //                         result = true;
-        //             }
-        //         }
-        //         return result;
-        //     }
-        // );
-        // const realExpense = expenses.map((expense) => <div key={expense.id}>{expense.title + ' ' + expense.amount}</div>);
+
+        // CHARGEMENT DE LA PAGE
         if (this.props.expenses.length === 0) {
              return <div>Chargement en cours...</div>
         }
+
+        // INITIALISATION DE LA LOCALE POUR MOMENT JS
         moment.locale('fr');
 
-        const expenses = this.props.expenses.map((expense) =>
-            <div className="d-flex" key={expense.id}>
-                <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({expense.amount}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).startOf('day').fromNow()} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
-                <Link id={expense.id} to={this.props.match.url + '/edit'} onClick={(e) => this.handleEdit(e.target.id)} className="btn btn-secondary align-self-center ml-2">Modifier</Link>
-                <Button className="align-self-center ml-2">Supprimer</Button>
-            </div>);
-
-        let total = 0;
-        for (let i = 0; i < this.props.expenses.length; i++) {
-            total += parseFloat(this.props.expenses[i].amount);
-        }
-
+        // TRI DES DEPENSES PAR DATE DE CREATION
         var sorted_expenses = this.props.expenses.sort((a,b) => {
             return new Date(a.createdAt).getTime() -
                 new Date(b.createdAt).getTime()
         }).reverse();
 
+        // AFFICHAGE DES DEPENSES
+        const expenses = this.props.expenses.map((expense) =>
+            <div className="d-flex" key={expense.id}>
+                <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({expense.amount}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).startOf('hour').fromNow()} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
+                <Link to={this.props.match.url + '/edit'} onClick={(e) => this.handleEdit(e,expense.id, expense.amount, expense.person.id, expense.category.id, expense.title)} className="btn btn-secondary align-self-center ml-2">Modifier</Link>
+                <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2">Supprimer</Button>
+            </div>);
+
+        // AFFICHAGE DU TOTAL DES DEPENSES
+        let total = 0;
+        for (let i = 0; i < this.props.expenses.length; i++) {
+            total += parseFloat(this.props.expenses[i].amount);
+        }
+
         return (
             <div>
                 <h1>Les dépenses</h1>
                 <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
-                <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} persons={this.props.persons}/>} />
-                <Route path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} persons={this.props.persons}/>} />
-
-
+                <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} slug={this.props.match.params.id} persons={this.props.persons} getData={data => this.getData(data)} />} />
+                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} url={this.props.match.url} persons={this.props.persons} getData={data => this.getData(data)} addExpense={data => this.addExpense(data)}/>} />
+                <div>Le total est {total} €</div>
                 {expenses}
-                Le total est {total} €
             </div>
         );
     }

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import {Redirect} from "react-router-dom";
 
 class FormExpense extends Component {
     constructor(props) {
@@ -9,7 +10,20 @@ class FormExpense extends Component {
             amount: '',
             category: '',
             person: '',
-            categories: []
+            categories: [],
+            redirect: false
+        };
+    }
+
+    componentWillReceiveProps(props) {
+        if (this.props.data) {
+            this.setState({
+                title: props.data.title,
+                amount: props.data.amount,
+                person: props.data.person,
+                category: props.data.category
+            });
+            console.log("j'ajoute les données")
         }
     }
 
@@ -23,6 +37,7 @@ class FormExpense extends Component {
             .then(response => response.json())
             .then(data => this.setState({categories : data}))
         ;
+
     }
 
     handleChange(event) {
@@ -37,39 +52,79 @@ class FormExpense extends Component {
         console.log(this.state.amount);
         console.log(this.state.person);
         console.log(this.state.title);
-        fetch('http://localhost/dcdev/php/expenshare/public/expense', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                title: this.state.title,
-                amount: this.state.amount,
-                person: this.state.person,
-                category: this.state.category
+
+        if (this.props.match.url.split("/").slice(-1)[0] == "add") {
+            fetch('http://localhost/dcdev/php/expenshare/public/expense/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: this.state.title,
+                    amount: this.state.amount,
+                    person: parseInt(this.state.person),
+                    category: parseInt(this.state.category)
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                alert('Dépense ajoutée !');
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    alert('Dépense ajoutée !');
+                    this.props.getData(data);
+                })
+                .catch(err => console.log(err))
+            ;
+        } else {
+            fetch('http://localhost/dcdev/php/expenshare/public/expense/' + this.props.data.id + '/edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: this.state.title,
+                    amount: this.state.amount,
+                    person: parseInt(this.state.person),
+                    category: parseInt(this.state.category)
+                })
             })
-            .catch(err => console.log(err))
-        ;
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    alert('Dépense modifiée !');
+                    //this.setState({redirect: true});
+                })
+                .catch(err => console.log(err))
+            ;
+        }
+
     }
 
     render() {
 
 
-        const titre = () => {
-            if (this.props.match.url.split("/").slice(-1)[0] == "edit") {
-                    return <h1>Editer une dépense</h1>
-                } else {
-                    return <h1>Ajouter une nouvelle dépense</h1>
-                }
-        };
+        let titre;
+        let defTitle;
+        let defAmount;
+        let defPerson;
+        let defCategory;
+
+        if (this.props.match.url.split("/").slice(-1)[0] == "edit") {
+            titre = <h2>Editer une dépense</h2>;
+            defTitle = this.props.data.title;
+            defAmount = this.props.data.amount;
+            defPerson = this.props.data.person;
+            defCategory = this.props.data.category;
+        } else {
+            titre = <h2>Ajouter une nouvelle dépense</h2>;
+        }
+
+        if (this.state.redirect == true) {
+            return <Redirect to={this.props.url}/>
+        }
 
         const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
         const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
