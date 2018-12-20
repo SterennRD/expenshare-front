@@ -5,14 +5,27 @@ import {Redirect} from "react-router-dom";
 class FormExpense extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            title: props.data.title,
-            amount: props.data.amount,
-            person: props.data.person,
-            category: props.data.category,
-            categories: [],
-            redirect: false
-        };
+        console.log(props.data);
+        if (this.props.data) {
+            this.state = {
+                title: props.data.title,
+                amount: props.data.amount,
+                person: props.data.person,
+                category: props.data.category,
+                categories: [],
+                redirect: false
+            }
+        } else {
+            this.state = {
+                title: '',
+                amount: '',
+                person: '',
+                category: '',
+                categories: [],
+                redirect: false
+            }
+        }
+
     }
 
     componentWillReceiveProps(props) {
@@ -36,7 +49,6 @@ class FormExpense extends Component {
             .then(response => response.json())
             .then(data => this.setState({categories : data}))
         ;
-
     }
 
     handleChange(event) {
@@ -71,7 +83,7 @@ class FormExpense extends Component {
                 .then(data => {
                     console.log(data);
                     alert('Dépense ajoutée !');
-                    this.props.getData(data);
+                    this.props.addExpense(data);
                 })
                 .catch(err => console.log(err))
             ;
@@ -126,9 +138,8 @@ class FormExpense extends Component {
         }
 
         const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
-        const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
-        console.log('PROPS');
-        console.log(this.state);
+        const categories = this.props.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
+
         return (
             <div>
                 {titre}

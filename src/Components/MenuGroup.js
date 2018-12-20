@@ -12,9 +12,9 @@ class MenuGroup extends Component {
         return (
             <Navbar className="border rounded p-3">
                 <Nav>
-                    <NavLink activeClassName="text-dark" className="mr-2" to={`${this.props.url}/`}>Dashboard</NavLink>
-                    <NavLink activeClassName="text-dark" className="mr-2" to={`${this.props.url}/persons`}>Personnes</NavLink>
-                    <NavLink activeClassName="text-dark" className="mr-2" to={`${this.props.url}/expenses`}>Dépenses</NavLink>
+                    <NavLink activeClassName="font-weight-bold" className="mr-2" to={`${this.props.url}/`}>Dashboard</NavLink>
+                    <NavLink activeClassName="font-weight-bold" className="mr-2" to={`${this.props.url}/persons`}>Personnes</NavLink>
+                    <NavLink activeClassName="font-weight-bold" className="mr-2" to={`${this.props.url}/expenses`}>Dépenses</NavLink>
                 </Nav>
             </Navbar>
         );

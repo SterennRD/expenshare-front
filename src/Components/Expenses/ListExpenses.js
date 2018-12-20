@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment/min/moment-with-locales.min';
-import {Card, Button} from 'reactstrap';
+import {Card, Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {BrowserRouter, Link, Route, Switch} from "react-router-dom";
 import FormExpense from "./FormExpense";
 
@@ -19,16 +19,26 @@ class ListExpenses extends Component {
                     category: '',
                     title: ''
                 },
-            deleted: false
+            filters: {
+                category: '',
+                person: ''
+            },
+            categories: []
         };
         this.handleEdit = this.handleEdit.bind(this);
     }
 
     componentDidMount() {
-
+        fetch('http://localhost/dcdev/php/expenshare/public/category/', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => this.setState({categories : data}))
+        ;
     }
-
-
 
     // FONCTION EDITER
     handleEdit(e, id, amount, person, category, title) {
@@ -40,11 +50,8 @@ class ListExpenses extends Component {
                     category: category,
                     title: title
                 }
-            }, () => {
-            console.log(this.state.editForm);
-        });
+            });
         window.scrollTo(0, 250);
-
     }
 
     // FONCTION SUPPRIMER
@@ -57,25 +64,27 @@ class ListExpenses extends Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 alert('Dépense supprimée !');
-                this.setState({deleted: true});
                 this.props.deleteItem(id);
             })
             .catch(err => console.log(err))
         ;
     }
 
+    // REFRESH A L'AJOUT D'UNE DEPENSE
     addExpense(data) {
         this.props.addExpense(data);
     }
 
+
     getData(data) {
-        this.props.addExpense(data);
+        this.props.updateExpense(data);
     }
 
-    getData2(data) {
-        this.props.updateExpense(data);
+    // SYSTEME DE FILTRES
+    handleFilters(filterKey, filterValue) {
+        this.setState({ filters: { ...this.state.filters, [filterKey]: filterValue} });
+        console.log(this.state.filters);
     }
 
 
@@ -96,12 +105,45 @@ class ListExpenses extends Component {
         }).reverse();
 
         // AFFICHAGE DES DEPENSES
-        const expenses = this.props.expenses.map((expense) =>
+
+        const filteredExpenses = this.props.expenses.filter(expense => {
+            let result = false;
+            let filter = this.state.filters;
+            if (filter.category && filter.category != 0) {
+                if (filter.person && filter.person != 0) {
+                    if (expense.category.id == filter.category && expense.person.id == filter.person) {
+                        result = true;
+                    }
+                } else {
+                    if (expense.category.id == filter.category) {
+                        result = true;
+                    }
+                }
+            } else if (filter.person && filter.person != 0) {
+                if (filter.category && filter.category != 0) {
+                    if (expense.category.id == filter.category && expense.person.id == filter.person) {
+                        result = true;
+                    }
+                } else {
+                    if (expense.person.id == filter.person) {
+                        result = true;
+                    }
+                }
+            } else {
+                result = true;
+            }
+            return result;
+        });
+        const expenses = filteredExpenses.map((expense) =>
             <div className="d-flex" key={expense.id}>
                 <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({(expense.amount).toLocaleString()}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).format('LLL')} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
                 <Link to={this.props.match.url + '/edit'} onClick={(e) => this.handleEdit(e,expense.id, expense.amount, expense.person.id, expense.category.id, expense.title)} className="btn btn-secondary align-self-center ml-2">Modifier</Link>
                 <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2">Supprimer</Button>
             </div>);
+
+        //
+        const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
+        const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
 
         // AFFICHAGE DU TOTAL DES DEPENSES
         let total = 0;
@@ -109,20 +151,37 @@ class ListExpenses extends Component {
             total += parseFloat(this.props.expenses[i].amount);
         }
 
-        const shareExpense = (total / this.props.persons.length).toFixed(2);
-        console.log(this.props.persons.length);
+        const shareExpense = (total / this.props.persons.length).toLocaleString();
 
         return (
             <div>
                 <h1>Les dépenses</h1>
                 <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
-                <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} slug={this.props.match.params.id} persons={this.props.persons} getData={data => this.getData(data)} />} />
-                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} url={this.props.match.url} persons={this.props.persons} getData2={data => this.getData2(data)} />} />
+                <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} categories={this.state.categories} slug={this.props.match.params.id} persons={this.props.persons} addExpense={data => this.addExpense(data)} />} />
+                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} categories={this.state.categories} url={this.props.match.url} persons={this.props.persons} getData={data => this.getData(data)} />} />
 
                 <div className="p-3 mb-2 mt-2 bg-info text-white">
                     Le total est <b>{(total).toLocaleString()} €</b>
-                    <div>Chacun devrait payer {(shareExpense).toLocaleString()} €</div>
+                    <div>Chacun devrait payer {shareExpense} €</div>
                 </div>
+
+                <Form>
+                    <FormGroup>
+                        <Label>Catégories</Label>
+                        <Input type="select" onChange={event => this.handleFilters("category", event.target.value)} name="category">
+                            <option value="0">Toutes les catégories</option>
+                            {categories}
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Personnes</Label>
+                        <Input type="select" onChange={event => this.handleFilters("person",event.target.value)} name="person">
+                            <option value="0">Toutes les personnes</option>
+                            {persons}
+                        </Input>
+                    </FormGroup>
+                </Form>
+
                 {expenses}
             </div>
         );

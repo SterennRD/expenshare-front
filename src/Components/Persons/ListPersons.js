@@ -48,7 +48,6 @@ class ListPersons extends Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 alert('Nouvel utilisateur ajouté !');
                 this.addPerson(data);
             })
@@ -73,7 +72,6 @@ class ListPersons extends Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 alert('Utilisateur supprimé !');
                 this.deletePerson(id);
             })
@@ -100,9 +98,11 @@ class ListPersons extends Component {
         }
 
         const shareExpense = (total / this.state.persons.length).toFixed(2);
-        console.log(this.props.addPerson);
 
         const persons = this.state.persons.map(person => {
+            if (!person.expenses) {
+                person.expenses = [];
+            }
             let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
             let balance = total - shareExpense;
             let balanceDisplay;
@@ -111,11 +111,12 @@ class ListPersons extends Component {
             } else {
                 balanceDisplay = <span className="text-danger"> {(balance).toLocaleString()} €</span>;
             }
+
                 if (person.expenses.length > 1) {
                     return (
                         <div className="d-flex align-items-center mb-1" key={person.id}>
                         <Card className="p-2 flex-fill">
-                            {person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépenses) {balanceDisplay}
+                            {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} dépenses) {balanceDisplay}
                         </Card>
                             <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2">Supprimer</Button>
                         </div>
@@ -124,7 +125,7 @@ class ListPersons extends Component {
                     return (
                         <div className="d-flex align-items-center mb-1" key={person.id}>
                             <Card className="p-2 flex-fill">
-                                {person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépense) {balanceDisplay}
+                                {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} dépense) {balanceDisplay}
                             </Card>
                             <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2">Supprimer</Button>
                         </div>

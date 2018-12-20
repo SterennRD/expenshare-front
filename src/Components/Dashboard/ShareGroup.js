@@ -5,6 +5,8 @@ import ListPersons from "../Persons/ListPersons";
 import { Navbar, Nav, NavItem, NavbarBrand } from 'reactstrap';
 import MenuGroup from "../MenuGroup";
 import FormExpense from "../Expenses/FormExpense";
+import Charts from "./Charts";
+
 
 
 class ShareGroup extends Component {
@@ -28,7 +30,7 @@ class ShareGroup extends Component {
             .then(response => response.json())
             .then(data => this.setState({group : JSON.parse(data)}))
         ;
-        fetch('http://localhost/dcdev/php/expenshare/public/person/' + this.props.match.params.id, {
+        fetch('http://localhost/dcdev/php/expenshare/public/person/group/' + this.props.match.params.id, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -90,6 +92,10 @@ class ShareGroup extends Component {
     render() {
         const persons = this.state.persons.map((person) => <div key={person.id}>{person.firstname}</div>);
         let { expenses } = this.state.expenses;
+
+
+        console.log(this.state.persons);
+
         return (
             <BrowserRouter>
             <div>
@@ -97,9 +103,11 @@ class ShareGroup extends Component {
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
+                    <Route exact path={`${this.props.match.path}`} render={()=><Charts persons={this.state.persons} />} />
                     <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id} />} />
                     <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteItem={id => this.deleteItem(id)} addExpense={data => this.addExpense(data)}/>} />
                 </Switch>
+
             </div>
             </BrowserRouter>
         );
