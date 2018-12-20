@@ -64,19 +64,25 @@ class ListPersons extends Component {
 
     // FONCTION SUPPRIMER
     handleDelete(id) {
-        fetch('http://localhost/dcdev/php/expenshare/public/person/', {
-            method: 'DELETE',
-            body: JSON.stringify({
-                id: parseInt(id)
+        let confirm = window.confirm("Voulez-vous vraiment supprimer l'utilisateur ?");
+        if (confirm) {
+            fetch('http://localhost/dcdev/php/expenshare/public/person/', {
+                method: 'DELETE',
+                body: JSON.stringify({
+                    id: parseInt(id)
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                alert('Utilisateur supprimé !');
-                this.deletePerson(id);
-            })
-            .catch(err => console.log(err))
-        ;
+                .then(response => response.json())
+                .then(data => {
+                    alert('Utilisateur supprimé !');
+                    this.deletePerson(id);
+                })
+                .catch(err => console.log(err))
+            ;
+        } else {
+            // Do nothing!
+        }
+
     }
 
     // ACTUALISER A LA SUPPRESSION D'UN ITEM
@@ -118,7 +124,7 @@ class ListPersons extends Component {
                         <Card className="p-2 flex-fill">
                             {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} dépenses) {balanceDisplay}
                         </Card>
-                            <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2">Supprimer</Button>
+                            <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2" color="danger">Supprimer</Button>
                         </div>
                     )
                 } else {
@@ -127,7 +133,7 @@ class ListPersons extends Component {
                             <Card className="p-2 flex-fill">
                                 {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} dépense) {balanceDisplay}
                             </Card>
-                            <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2">Supprimer</Button>
+                            <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2" color="danger">Supprimer</Button>
                         </div>
                     )
                 }

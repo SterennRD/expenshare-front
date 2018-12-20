@@ -56,19 +56,24 @@ class ListExpenses extends Component {
 
     // FONCTION SUPPRIMER
     handleDelete(id) {
-        fetch('http://localhost/dcdev/php/expenshare/public/expense/', {
-            method: 'DELETE',
-            body: JSON.stringify({
-                id: parseInt(id)
+        let confirm = window.confirm("Voulez-vous vraiment supprimer la dépense ?");
+        if (confirm) {
+            fetch('http://localhost/dcdev/php/expenshare/public/expense/', {
+                method: 'DELETE',
+                body: JSON.stringify({
+                    id: parseInt(id)
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                alert('Dépense supprimée !');
-                this.props.deleteItem(id);
-            })
-            .catch(err => console.log(err))
-        ;
+                .then(response => response.json())
+                .then(data => {
+                    alert('Dépense supprimée !');
+                    this.props.deleteItem(id);
+                })
+                .catch(err => console.log(err))
+            ;
+        } else {
+
+        }
     }
 
     // REFRESH A L'AJOUT D'UNE DEPENSE
@@ -77,7 +82,7 @@ class ListExpenses extends Component {
     }
 
 
-    getData(data) {
+    updateExpense(data) {
         this.props.updateExpense(data);
     }
 
@@ -137,8 +142,8 @@ class ListExpenses extends Component {
         const expenses = filteredExpenses.map((expense) =>
             <div className="d-flex" key={expense.id}>
                 <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({(expense.amount).toLocaleString()}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).format('LLL')} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
-                <Link to={this.props.match.url + '/edit'} onClick={(e) => this.handleEdit(e,expense.id, expense.amount, expense.person.id, expense.category.id, expense.title)} className="btn btn-secondary align-self-center ml-2">Modifier</Link>
-                <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2">Supprimer</Button>
+                <Link to={this.props.match.url + '/edit'} onClick={(e) => this.handleEdit(e,expense.id, expense.amount, expense.person.id, expense.category.id, expense.title)} className="btn btn-primary align-self-center ml-2">Modifier</Link>
+                <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2" color="danger">Supprimer</Button>
             </div>);
 
         //
@@ -158,7 +163,7 @@ class ListExpenses extends Component {
                 <h1>Les dépenses</h1>
                 <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
                 <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} categories={this.state.categories} slug={this.props.match.params.id} persons={this.props.persons} addExpense={data => this.addExpense(data)} />} />
-                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} categories={this.state.categories} url={this.props.match.url} persons={this.props.persons} getData={data => this.getData(data)} />} />
+                <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} categories={this.state.categories} url={this.props.match.url} persons={this.props.persons} updateExpense={data => this.updateExpense(data)} />} />
 
                 <div className="p-3 mb-2 mt-2 bg-info text-white">
                     Le total est <b>{(total).toLocaleString()} €</b>

@@ -28,6 +28,7 @@ class FormExpense extends Component {
 
     }
 
+    // ACTUALISATION DU CONTENU DU FORMULAIRE
     componentWillReceiveProps(props) {
         if (this.props.data) {
             this.setState({
@@ -51,19 +52,18 @@ class FormExpense extends Component {
         ;
     }
 
+    // CHANGEMENT DU STATE AU CHANGEMENT DE L'INPUT
     handleChange(event) {
         this.setState({
             [event.target.name]: event.target.value
         });
     }
 
+    // ENVOI DU FORMULAIRE
     handleSubmit(event) {
         event.preventDefault();
-        console.log(this.state.category);
-        console.log(this.state.amount);
-        console.log(this.state.person);
-        console.log(this.state.title);
 
+        // Si la route se termine en "add", on envoie la requête en post
         if (this.props.match.url.split("/").slice(-1)[0] == "add") {
             fetch('http://localhost/dcdev/php/expenshare/public/expense/', {
                 method: 'POST',
@@ -81,12 +81,12 @@ class FormExpense extends Component {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     alert('Dépense ajoutée !');
                     this.props.addExpense(data);
                 })
                 .catch(err => console.log(err))
             ;
+            // Sinon la route se termine en "edit" et on envoie la requête en post pour éditer
         } else {
             fetch('http://localhost/dcdev/php/expenshare/public/expense/' + this.props.data.id + '/edit', {
                 method: 'POST',
@@ -104,31 +104,20 @@ class FormExpense extends Component {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     alert('Dépense modifiée !');
-                    this.props.getData2(data);
+                    this.props.updateExpense(data);
                 })
                 .catch(err => console.log(err))
             ;
         }
-
     }
 
     render() {
 
-
+        // Selon comment la route se termine, le titre affiche 'modifier' ou 'ajouter'
         let titre;
-        let defTitle;
-        let defAmount;
-        let defPerson;
-        let defCategory;
-
         if (this.props.match.url.split("/").slice(-1)[0] == "edit") {
             titre = <h2>Editer une dépense</h2>;
-            // defTitle = this.props.data.title;
-            // defAmount = this.props.data.amount;
-            // defPerson = this.props.data.person;
-            // defCategory = this.props.data.category;
         } else {
             titre = <h2>Ajouter une nouvelle dépense</h2>;
         }
@@ -137,6 +126,7 @@ class FormExpense extends Component {
             return <Redirect to={this.props.url}/>
         }
 
+        // AFFICHAGE DES PERSONNES ET DES CATEGORIES
         const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
         const categories = this.props.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
 
@@ -144,14 +134,17 @@ class FormExpense extends Component {
             <div>
                 {titre}
                 <Form onSubmit={e=> this.handleSubmit(e)}>
+
                     <FormGroup>
                         <Label for="title">Titre</Label>
                         <Input type="text" value={this.state.title} onChange={this.handleChange.bind(this)} name="title" id="title" placeholder="Titre de la dépense" />
                     </FormGroup>
+
                     <FormGroup>
                         <Label for="amount">Montant</Label>
                         <Input type="number" value={this.state.amount} onChange={this.handleChange.bind(this)} name="amount" id="amount" placeholder="Montant de la dépense" />
                     </FormGroup>
+
                     <FormGroup>
                         <Label for="person">Personne</Label>
                         <Input type="select" value={this.state.person} onChange={this.handleChange.bind(this)} name="person" id="person">
@@ -159,6 +152,7 @@ class FormExpense extends Component {
                             {persons}
                         </Input>
                     </FormGroup>
+
                     <FormGroup>
                         <Label for="category">Catégorie</Label>
                         <Input type="select" value={this.state.category} onChange={this.handleChange.bind(this)} name="category" id="category">
@@ -168,6 +162,7 @@ class FormExpense extends Component {
                     </FormGroup>
 
                     <Button type="submit">Submit</Button>
+
                 </Form>
             </div>
         );
