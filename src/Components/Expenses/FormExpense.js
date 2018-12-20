@@ -83,6 +83,7 @@ class FormExpense extends Component {
                 .then(data => {
                     alert('Dépense ajoutée !');
                     this.props.addExpense(data);
+                    this.setState({redirect: true})
                 })
                 .catch(err => console.log(err))
             ;
@@ -106,6 +107,7 @@ class FormExpense extends Component {
                 .then(data => {
                     alert('Dépense modifiée !');
                     this.props.updateExpense(data);
+                    this.setState({redirect: true})
                 })
                 .catch(err => console.log(err))
             ;
@@ -122,6 +124,7 @@ class FormExpense extends Component {
             titre = <h2>Ajouter une nouvelle dépense</h2>;
         }
 
+        // REDIRECTION APRES ENVOI DU FORMULAIRE
         if (this.state.redirect == true) {
             return <Redirect to={this.props.url}/>
         }

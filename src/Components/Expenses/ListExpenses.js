@@ -162,7 +162,7 @@ class ListExpenses extends Component {
             <div>
                 <h1>Les dépenses</h1>
                 <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
-                <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} categories={this.state.categories} slug={this.props.match.params.id} persons={this.props.persons} addExpense={data => this.addExpense(data)} />} />
+                <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} categories={this.state.categories} slug={this.props.match.params.id} url={this.props.match.url} persons={this.props.persons} addExpense={data => this.addExpense(data)} />} />
                 <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} categories={this.state.categories} url={this.props.match.url} persons={this.props.persons} updateExpense={data => this.updateExpense(data)} />} />
 
                 <div className="p-3 mb-2 mt-2 bg-info text-white">
