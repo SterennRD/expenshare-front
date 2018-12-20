@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap';
 import { Redirect, Route, Link } from "react-router-dom";
 import ShareGroup from "./Dashboard/ShareGroup";
+import slugify from 'slugify/index';
 
 class FormShareGroup extends Component {
     constructor(props) {
@@ -15,13 +16,14 @@ class FormShareGroup extends Component {
     handleChange(event) {
         event.preventDefault();
         this.setState({ slug: event.target.value });
+
     }
 
     handleCreate(event) {
         event.preventDefault();
         fetch('http://localhost/dcdev/php/expenshare/public/sharegroup/', {
             method: 'POST',
-            body: JSON.stringify({ slug: this.state.slug })
+            body: JSON.stringify({ slug: slugify(this.state.slug) })
         })
             .then(response => response.json())
             .then(data => {
@@ -34,7 +36,7 @@ class FormShareGroup extends Component {
 
     handleOpen(event) {
         event.preventDefault();
-        fetch('http://localhost/dcdev/php/expenshare/public/sharegroup/' + this.state.slug)
+        fetch('http://localhost/dcdev/php/expenshare/public/sharegroup/' + slugify(this.state.slug))
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -51,9 +53,9 @@ class FormShareGroup extends Component {
         }
 
         return (
-            <div className="d-flex flex-column">
+            <div className="d-flex flex-column align-items-center bg-light p-3 mb-auto mt-auto">
                 <h2>Rentrez l'identifiant d'un groupe</h2>
-                <input className="p-1 mb-2" type="text" value={this.state.slug} onChange={e => this.handleChange(e)} placeholder="Group ID"/>
+                <input className="p-1 mb-2 w-75" type="text" value={this.state.slug} onChange={e => this.handleChange(e)} placeholder="Group ID"/>
                 <div>
                     <Button onClick={e => this.handleCreate(e)} color="primary" className="mr-2">Creér</Button>
                     <Button onClick={e => this.handleOpen(e)} color="primary">Ouvrir</Button>

@@ -11,7 +11,7 @@ import ShareGroup from "./Components/Dashboard/ShareGroup";
 class App extends Component {
   render() {
     return (
-        <Container>
+        <Container className="d-flex flex-column expenshare">
             <Menu/>
             <Route exact path="/group" component={FormShareGroup}/>
             <Route path="/group/:id" component={ShareGroup}/>

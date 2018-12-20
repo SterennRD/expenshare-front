@@ -96,7 +96,7 @@ class ShareGroup extends Component {
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expensesList={this.state.expenses} expenses={this.state.expensesList} persons={this.state.persons} id={this.state.group.id}/>} />
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id}/>} />
                     <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteItem={id => this.deleteItem(id)} addExpense={data => this.addExpense(data)}/>} />}/>
                 </Switch>
             </div>

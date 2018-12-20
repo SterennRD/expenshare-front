@@ -57,16 +57,28 @@ class ListPersons extends Component {
 
     render() {
 
+        // AFFICHAGE DU TOTAL DES DEPENSES
+        let total = 0;
+        for (let i = 0; i < this.props.expenses.length; i++) {
+            total += parseFloat(this.props.expenses[i].amount);
+        }
+
+        const shareExpense = (total / this.state.persons.length).toFixed(2);
+        console.log(this.state.persons.length);
+
         const persons = this.state.persons.map(person => {
             let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
+            let balance = total - shareExpense;
                 if (person.expenses.length > 1) {
-                    return <Card className="p-2 mb-1" key={person.id}>{person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépenses)</Card>
+                    return <Card className="p-2 mb-1" key={person.id}>{person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépenses) {balance}</Card>
                 } else {
                     return <Card className="p-2 mb-1" key={person.id}>{person.firstname + ' ' + person.lastname} a payé {total} € ({person.expenses.length} dépense)</Card>
                 }
         });
 
-        console.log(this.state.persons);
+
+
+        console.log(shareExpense);
 
         if (this.state.persons.length === 0) {
             return <div>Chargement en cours...</div>

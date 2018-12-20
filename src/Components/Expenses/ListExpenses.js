@@ -109,13 +109,20 @@ class ListExpenses extends Component {
             total += parseFloat(this.props.expenses[i].amount);
         }
 
+        const shareExpense = (total / this.props.persons.length).toFixed(2);
+        console.log(this.props.persons.length);
+
         return (
             <div>
                 <h1>Les dépenses</h1>
                 <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
                 <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} slug={this.props.match.params.id} persons={this.props.persons} getData={data => this.getData(data)} />} />
                 <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} url={this.props.match.url} persons={this.props.persons} getData2={data => this.getData2(data)} />} />
-                <div className="p-3 mb-2 mt-2 bg-info text-white">Le total est <b>{total} €</b></div>
+
+                <div className="p-3 mb-2 mt-2 bg-info text-white">
+                    Le total est <b>{total} €</b>
+                    <div>Chacun devrait payer {shareExpense} €</div>
+                </div>
                 {expenses}
             </div>
         );
