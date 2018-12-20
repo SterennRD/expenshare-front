@@ -22,12 +22,14 @@ class ListPersons extends Component {
         ;
     }
 
+    // CHANGEMENT DU STATE A LA MODIF DU INPUT
     handleChange(event) {
         this.setState({
             [event.target.name]: event.target.value
         });
     }
 
+    // ENVOI DU FORMULAIRE
     handleSubmit(event) {
         event.preventDefault();
         console.log(this.state.firstname);
@@ -55,7 +57,7 @@ class ListPersons extends Component {
         ;
     }
 
-    // ACTUALISER A L'AJOUT D'UN ITEM
+    // ACTUALISER A L'AJOUT D'UNE PERSONNE
     addPerson(data) {
         let persons = this.state.persons;
         persons.push(JSON.parse(data));
@@ -80,12 +82,11 @@ class ListPersons extends Component {
                 .catch(err => console.log(err))
             ;
         } else {
-            // Do nothing!
-        }
 
+        }
     }
 
-    // ACTUALISER A LA SUPPRESSION D'UN ITEM
+    // ACTUALISER A LA SUPPRESSION D'UNE PERSONNE
     deletePerson(id) {
         this.setState(prevState=>{
             const newPersons = prevState.persons.filter((person)=>person.id!==id);
@@ -96,20 +97,20 @@ class ListPersons extends Component {
     }
 
     render() {
-
-
+        // CALCUL DU TOTAL DES DEPENSES
         let total = 0;
         for (let i = 0; i < this.props.expenses.length; i++) {
             total += parseFloat(this.props.expenses[i].amount);
         }
-
         const shareExpense = (total / this.state.persons.length).toFixed(2);
 
+        // AFFICHAGE DES PERSONNES
         const persons = this.state.persons.map(person => {
             if (!person.expenses) {
                 person.expenses = [];
             }
             let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
+            // Calcul de la balance
             let balance = total - shareExpense;
             let balanceDisplay;
             if (balance > 0) {
@@ -117,39 +118,30 @@ class ListPersons extends Component {
             } else {
                 balanceDisplay = <span className="text-danger"> {(balance).toLocaleString()} €</span>;
             }
-
-                if (person.expenses.length > 1) {
-                    return (
-                        <div className="d-flex align-items-center mb-1" key={person.id}>
-                        <Card className="p-2 flex-fill">
-                            {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} dépenses) {balanceDisplay}
-                        </Card>
-                            <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2" color="danger">Supprimer</Button>
-                        </div>
-                    )
-                } else {
-                    return (
-                        <div className="d-flex align-items-center mb-1" key={person.id}>
-                            <Card className="p-2 flex-fill">
-                                {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} dépense) {balanceDisplay}
-                            </Card>
-                            <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2" color="danger">Supprimer</Button>
-                        </div>
-                    )
-                }
+            // Si il y a plus d'une dépense, on affiche un S
+            let depense = "dépense";
+            if (person.expenses.length > 1) {
+                depense = "dépenses"
+            }
+            return (
+                <div className="d-flex align-items-center mb-1" key={person.id}>
+                    <Card className="p-2 flex-fill">
+                        {person.firstname + ' ' + person.lastname} a payé {(total).toLocaleString()} € ({person.expenses.length} {depense}) {balanceDisplay}
+                    </Card>
+                    <Button id={person.id} onClick={(e) => this.handleDelete(e.target.id)} className="ml-2" color="danger">Supprimer</Button>
+                </div>
+            )
         });
 
-
+        // CHARGEMENT DE LA PAGE
         if (this.state.persons.length === 0) {
             return <div>Chargement en cours...</div>
         }
 
-
-
-
         return (
             <div>
                 <h1>Personnes</h1>
+
                 <Form className="text-center" onSubmit={this.handleSubmit.bind(this)}>
                     <FormGroup className="d-flex align-items-center">
                         <Label for="firstname" className="mr-2 font-weight-bold">Prénom</Label>

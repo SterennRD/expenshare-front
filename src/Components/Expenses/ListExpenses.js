@@ -67,7 +67,7 @@ class ListExpenses extends Component {
                 .then(response => response.json())
                 .then(data => {
                     alert('Dépense supprimée !');
-                    this.props.deleteItem(id);
+                    this.props.deleteExpense(id);
                 })
                 .catch(err => console.log(err))
             ;
@@ -109,8 +109,7 @@ class ListExpenses extends Component {
                 new Date(b.createdAt).getTime()
         }).reverse();
 
-        // AFFICHAGE DES DEPENSES
-
+        // FILTRAGE DES DEPENSES
         const filteredExpenses = this.props.expenses.filter(expense => {
             let result = false;
             let filter = this.state.filters;
@@ -139,6 +138,8 @@ class ListExpenses extends Component {
             }
             return result;
         });
+
+        // AFFICHAGE DES DEPENSES
         const expenses = filteredExpenses.map((expense) =>
             <div className="d-flex" key={expense.id}>
                 <Card className="flex-fill mb-1 p-2 flex-row justify-content-between align-items-center"><div className="d-flex flex-column"><b>{expense.title} ({(expense.amount).toLocaleString()}€)</b> payé par {expense.person.firstname + ' ' + expense.person.lastname} {moment(expense.createdAt).format('LLL')} </div><i className={'fas fa-2x ' + expense.category.icon}></i></Card>
@@ -146,7 +147,7 @@ class ListExpenses extends Component {
                 <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2" color="danger">Supprimer</Button>
             </div>);
 
-        //
+
         const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
         const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
 
@@ -155,7 +156,6 @@ class ListExpenses extends Component {
         for (let i = 0; i < this.props.expenses.length; i++) {
             total += parseFloat(this.props.expenses[i].amount);
         }
-
         const shareExpense = (total / this.props.persons.length).toLocaleString();
 
         return (

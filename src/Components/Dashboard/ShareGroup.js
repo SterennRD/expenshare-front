@@ -15,7 +15,6 @@ class ShareGroup extends Component {
         this.state = {
             group: [],
             expenses: [],
-            expensesList: [],
             persons: []
         }
     }
@@ -50,19 +49,10 @@ class ShareGroup extends Component {
                 this.setState({expenses : data})
             })
         ;
-        fetch('http://localhost/dcdev/php/expenshare/public/expense/liste/' + this.props.match.params.id, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-            .then(response => response.json())
-            .then(data => this.setState({expensesList : data}))
-        ;
     }
 
-    // ACTUALISER A LA SUPPRESSION D'UN ITEM
-    deleteItem(id) {
+    // ACTUALISER A LA SUPPRESSION D'UNE DEPENSE
+    deleteExpense(id) {
         this.setState(prevState=>{
             const newExpenses = prevState.expenses.filter((expense)=>expense.id!==id);
             return {
@@ -71,41 +61,30 @@ class ShareGroup extends Component {
         })
     }
 
-
-
-    // ACTUALISER A L'AJOUT D'UN ITEM
+    // ACTUALISER A L'AJOUT D'UNE DEPENSE
     addExpense(data) {
         let expenses = this.state.expenses;
         expenses.push(JSON.parse(data));
         this.setState({expenses: expenses});
     }
 
-
-
+    // ACUTALISER A L'EDITION D'UNE DEPENSE
     updateExpense(data) {
         this.setState({expenses: JSON.parse(data)});
     }
 
-
-
-
     render() {
-        const persons = this.state.persons.map((person) => <div key={person.id}>{person.firstname}</div>);
-        let { expenses } = this.state.expenses;
-
-
-        console.log(this.state.persons);
 
         return (
             <BrowserRouter>
             <div>
-                <h1>{this.props.match.params.id} {this.props.id}</h1>
+                <h1>{this.props.match.params.id}</h1>
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
                     <Route exact path={`${this.props.match.path}`} render={()=><Charts persons={this.state.persons} />} />
                     <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id} />} />
-                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteItem={id => this.deleteItem(id)} addExpense={data => this.addExpense(data)}/>} />
+                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteExpense={id => this.deleteExpense(id)} addExpense={data => this.addExpense(data)}/>} />
                 </Switch>
 
             </div>
