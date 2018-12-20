@@ -13,12 +13,14 @@ class FormShareGroup extends Component {
         };
     }
 
+    // CHANGEMENT DU STATE AU CHANGEMENT DE L'INPUT
     handleChange(event) {
         event.preventDefault();
         this.setState({ slug: event.target.value });
 
     }
 
+    // CREATION D'UN GROUPE
     handleCreate(event) {
         event.preventDefault();
         fetch('http://localhost/dcdev/php/expenshare/public/sharegroup/', {
@@ -34,6 +36,7 @@ class FormShareGroup extends Component {
         ;
     }
 
+    // ACCES A UN GROUPE
     handleOpen(event) {
         event.preventDefault();
         fetch('http://localhost/dcdev/php/expenshare/public/sharegroup/' + slugify(this.state.slug))
@@ -48,6 +51,7 @@ class FormShareGroup extends Component {
 
     render() {
 
+        // Si le groupe existe, on est redirigé
         if (this.state.sharegroup) {
             return <Redirect to={'/group/' + this.state.sharegroup.slug}/>
         }

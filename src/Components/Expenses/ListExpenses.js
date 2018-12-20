@@ -89,7 +89,6 @@ class ListExpenses extends Component {
     // SYSTEME DE FILTRES
     handleFilters(filterKey, filterValue) {
         this.setState({ filters: { ...this.state.filters, [filterKey]: filterValue} });
-        console.log(this.state.filters);
     }
 
 
