@@ -6,10 +6,10 @@ class FormExpense extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title:'',
-            amount: '',
-            category: '',
-            person: '',
+            title: props.data.title,
+            amount: props.data.amount,
+            person: props.data.person,
+            category: props.data.category,
             categories: [],
             redirect: false
         };
@@ -113,10 +113,10 @@ class FormExpense extends Component {
 
         if (this.props.match.url.split("/").slice(-1)[0] == "edit") {
             titre = <h2>Editer une dépense</h2>;
-            defTitle = this.props.data.title;
-            defAmount = this.props.data.amount;
-            defPerson = this.props.data.person;
-            defCategory = this.props.data.category;
+            // defTitle = this.props.data.title;
+            // defAmount = this.props.data.amount;
+            // defPerson = this.props.data.person;
+            // defCategory = this.props.data.category;
         } else {
             titre = <h2>Ajouter une nouvelle dépense</h2>;
         }
@@ -127,6 +127,8 @@ class FormExpense extends Component {
 
         const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
         const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
+        console.log('PROPS');
+        console.log(this.state);
         return (
             <div>
                 {titre}

@@ -69,15 +69,16 @@ class ShareGroup extends Component {
         })
     }
 
+
+
     // ACTUALISER A L'AJOUT D'UN ITEM
     addExpense(data) {
-
         let expenses = this.state.expenses;
         expenses.push(JSON.parse(data));
-        //This will trigger a rerender and the PostList will
-        //receive the new posts list.
         this.setState({expenses: expenses});
     }
+
+
 
     updateExpense(data) {
         this.setState({expenses: JSON.parse(data)});
@@ -96,8 +97,8 @@ class ShareGroup extends Component {
                 <MenuGroup url={this.props.match.url}/>
 
                 <Switch>
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id}/>} />
-                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteItem={id => this.deleteItem(id)} addExpense={data => this.addExpense(data)}/>} />}/>
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id} />} />
+                    <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteItem={id => this.deleteItem(id)} addExpense={data => this.addExpense(data)}/>} />
                 </Switch>
             </div>
             </BrowserRouter>
