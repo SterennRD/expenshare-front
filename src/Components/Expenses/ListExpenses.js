@@ -167,7 +167,7 @@ class ListExpenses extends Component {
                 person.expenses = [];
             }
             let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
-            console.log(total);
+
             // Calcul de la balance
             let balance = total - shareExpense;
             // Préparation de l'objet dette
@@ -202,7 +202,6 @@ class ListExpenses extends Component {
                 sortedValuesPaid[i] += payment;
                 sortedValuesPaid[j] -= payment;
 
-                console.log(`${sortedPeople[i]} owes ${sortedPeople[j]} $${payment}`);
                 let debtTotal = `${sortedPeople[i]} doit ${(payment).toLocaleString(undefined, { maximumFractionDigits: 2 })}€ à ${sortedPeople[j]}`;
 
                 // on stocke la dette dans un array pour pouvoir l'afficher plus tard

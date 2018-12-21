@@ -5,7 +5,6 @@ import {Redirect} from "react-router-dom";
 class FormExpense extends Component {
     constructor(props) {
         super(props);
-        console.log(props.data);
         if (this.props.data) {
             this.state = {
                 title: props.data.title,

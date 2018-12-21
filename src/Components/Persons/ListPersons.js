@@ -9,18 +9,17 @@ class ListPersons extends Component {
             firstname: '',
             lastname: '',
             expenses: [],
-            group: this.props.persons,
             id: []
         };
 
     }
 
-    componentDidMount() {
-        fetch('http://localhost/dcdev/php/expenshare/public/person/group/' + this.props.slug)
-            .then(response => response.json())
-            .then(data => this.setState({ persons: data }))
-        ;
-    }
+    // componentDidMount() {
+    //     fetch('http://localhost/dcdev/php/expenshare/public/person/group/' + this.props.slug)
+    //         .then(response => response.json())
+    //         .then(data => this.setState({ persons: data }))
+    //     ;
+    // }
 
     // CHANGEMENT DU STATE A LA MODIF DU INPUT
     handleChange(event) {
@@ -32,9 +31,6 @@ class ListPersons extends Component {
     // ENVOI DU FORMULAIRE
     handleSubmit(event) {
         event.preventDefault();
-        console.log(this.state.firstname);
-        console.log(this.state.lastname);
-        console.log(this.props.id);
         fetch('http://localhost/dcdev/php/expenshare/public/person/', {
             method: 'POST',
             headers: {
@@ -51,19 +47,23 @@ class ListPersons extends Component {
             .then(response => response.json())
             .then(data => {
                 alert('Nouvel utilisateur ajouté !');
-                this.addPerson(data);
+                this.props.addPerson(data);
+                this.setState({
+                    firstname: '',
+                    lastname: ''
+                })
             })
             .catch(err => console.log(err))
         ;
     }
 
     // ACTUALISER A L'AJOUT D'UNE PERSONNE
-    addPerson(data) {
-        let persons = this.state.persons;
-        persons.push(JSON.parse(data));
-        this.setState({persons: persons});
-        this.props.addPerson(data);
-    }
+    // addPerson(data) {
+    //     let persons = this.state.persons;
+    //     persons.push(JSON.parse(data));
+    //     this.setState({persons: persons});
+    //     this.props.addPerson(data);
+    // }
 
     // FONCTION SUPPRIMER
     handleDelete(id) {
@@ -78,7 +78,6 @@ class ListPersons extends Component {
                 .then(response => response.json())
                 .then(data => {
                     alert('Utilisateur supprimé !');
-                    this.deletePerson(id);
                     this.props.deletePerson(id);
                 })
                 .catch(err => console.log(err))
@@ -89,31 +88,30 @@ class ListPersons extends Component {
     }
 
     // ACTUALISER A LA SUPPRESSION D'UNE PERSONNE
-    deletePerson(id) {
-        this.setState(prevState=>{
-            const newPersons = prevState.persons.filter((person)=>person.id!==id);
-            return {
-                persons: newPersons
-            }
-        })
-    }
+    // deletePerson(id) {
+    //     this.setState(prevState=>{
+    //         const newPersons = prevState.persons.filter((person)=>person.id!==id);
+    //         return {
+    //             persons: newPersons
+    //         }
+    //     })
+    // }
 
 
     render() {
 
-        console.log(this.state.debt);
         // CALCUL DU TOTAL DES DEPENSES
         let total = 0;
         for (let i = 0; i < this.props.expenses.length; i++) {
             total += parseFloat(this.props.expenses[i].amount);
         }
-        const shareExpense = (total / this.state.persons.length).toFixed(2);
+        const shareExpense = (total / this.props.persons.length).toFixed(2);
 
         // PREPARATION DES VARIABLES POUR LE CALCUL DU PARTAGE DES DEPENSES
         let debt = {};
 
         // AFFICHAGE DES PERSONNES
-        const persons = this.state.persons.map(person => {
+        const persons = this.props.persons.map(person => {
 
             if (!person.expenses) {
                 person.expenses = [];
@@ -145,7 +143,7 @@ class ListPersons extends Component {
 
 
         // CHARGEMENT DE LA PAGE
-        if (this.state.persons.length === 0) {
+        if (this.props.persons.length === 0) {
             return (
                 <div>
                     <h1>Personnes</h1>

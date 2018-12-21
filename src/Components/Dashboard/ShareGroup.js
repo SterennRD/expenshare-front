@@ -51,6 +51,19 @@ class ShareGroup extends Component {
         ;
     }
 
+    // Fonction de mise à jour des personnes (nouveau fetch)
+    update() {
+        fetch('http://localhost/dcdev/php/expenshare/public/person/group/' + this.props.match.params.id, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => this.setState({persons : data}))
+        ;
+    }
+
     // ACTUALISER A LA SUPPRESSION D'UNE DEPENSE
     deleteExpense(id) {
         this.setState(prevState=>{
@@ -58,7 +71,8 @@ class ShareGroup extends Component {
             return {
                 expenses: newExpenses
             }
-        })
+        });
+        this.update();
     }
 
     // ACTUALISER A L'AJOUT D'UNE DEPENSE
@@ -66,11 +80,13 @@ class ShareGroup extends Component {
         let expenses = this.state.expenses;
         expenses.push(JSON.parse(data));
         this.setState({expenses: expenses});
+        this.update();
     }
 
     // ACUTALISER A L'EDITION D'UNE DEPENSE
     updateExpense(data) {
         this.setState({expenses: JSON.parse(data)});
+        this.update();
     }
 
     // ACTUALISER A L'AJOUT D'UNE PERSONNE
