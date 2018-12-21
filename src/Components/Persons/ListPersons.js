@@ -62,6 +62,7 @@ class ListPersons extends Component {
         let persons = this.state.persons;
         persons.push(JSON.parse(data));
         this.setState({persons: persons});
+        this.props.addPerson(data);
     }
 
     // FONCTION SUPPRIMER
@@ -78,6 +79,7 @@ class ListPersons extends Component {
                 .then(data => {
                     alert('Utilisateur supprimé !');
                     this.deletePerson(id);
+                    this.props.deletePerson(id);
                 })
                 .catch(err => console.log(err))
             ;
@@ -144,7 +146,24 @@ class ListPersons extends Component {
 
         // CHARGEMENT DE LA PAGE
         if (this.state.persons.length === 0) {
-            return <div>Chargement en cours...</div>
+            return (
+                <div>
+                    <h1>Personnes</h1>
+                    <Form className="text-center" onSubmit={this.handleSubmit.bind(this)}>
+                        <FormGroup className="d-flex align-items-center">
+                            <Label for="firstname" className="mr-2 font-weight-bold">Prénom</Label>
+                            <Input type="text" value={this.state.firstname} onChange={this.handleChange.bind(this)} name="firstname" id="firstname" placeholder="Prénom" required />
+                        </FormGroup>
+                        <FormGroup className="d-flex align-items-center">
+                            <Label for="lastname" className="mr-2 font-weight-bold">Nom</Label>
+                            <Input type="text" value={this.state.lastname} onChange={this.handleChange.bind(this)} name="lastname" id="lastname" placeholder="Nom" required />
+                        </FormGroup>
+                        <Button className="m-1" color="primary">Ajouter</Button>
+                    </Form>
+
+                    <div>Chargement en cours...</div>
+                </div>
+            )
         }
 
         return (

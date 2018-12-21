@@ -78,7 +78,7 @@ class Charts extends Component {
         return (
             <div className="d-flex">
                 <div className="w-50">
-                <Doughnut data={data} width={200} options={{
+                <Doughnut data={data} width={250} options={{
                     legend: {
                         display: false
                     },
@@ -89,11 +89,11 @@ class Charts extends Component {
                     }
                 }}/>
                 </div>
-                <div className="w-50">
+                <div className="flex-fill">
                 <Bar
                     data={data2}
+                    height={150}
                     width={50}
-                    height={500}
                     options={{
                         maintainAspectRatio: false
                     }}

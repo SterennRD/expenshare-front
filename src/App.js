@@ -7,12 +7,14 @@ import {Route} from 'react-router-dom';
 import Menu from "./Components/Menu";
 import FormShareGroup from "./Components/FormShareGroup";
 import ShareGroup from "./Components/Dashboard/ShareGroup";
+import Homepage from "./Components/Homepage";
 
 class App extends Component {
   render() {
     return (
         <Container className="d-flex flex-column expenshare">
             <Menu/>
+            <Route exact path="/" component={Homepage}/>
             <Route exact path="/group" component={FormShareGroup}/>
             <Route path="/group/:id" component={ShareGroup}/>
         </Container>

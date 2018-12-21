@@ -6,7 +6,6 @@
   font-weight: bold;
   color: #ccc;
 }
-
-.chart-bar {
-  width: 300px;
+.maintitle {
+    text-transform: uppercase;
 }

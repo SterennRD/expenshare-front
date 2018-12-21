@@ -81,7 +81,7 @@ class ListExpenses extends Component {
         this.props.addExpense(data);
     }
 
-
+    // REFRESH A L'EDITION D'UNE DEPENSE
     updateExpense(data) {
         this.props.updateExpense(data);
     }
@@ -91,12 +91,19 @@ class ListExpenses extends Component {
         this.setState({ filters: { ...this.state.filters, [filterKey]: filterValue} });
     }
 
-
     render() {
 
         // CHARGEMENT DE LA PAGE
         if (this.props.expenses.length === 0) {
-             return <div>Chargement en cours...</div>
+             return (
+                 <div>
+                     <h1>Les dépenses</h1>
+                     <Link to={this.props.match.url + '/add'} className="btn btn-primary">Ajouter</Link>
+                     <Route path={this.props.match.url + '/add'} render={props=><FormExpense {...props} categories={this.state.categories} slug={this.props.match.params.id} url={this.props.match.url} persons={this.props.persons} addExpense={data => this.addExpense(data)} />} />
+                     <Route exact path={this.props.match.url + '/edit'} render={props=><FormExpense {...props} data={this.state.editForm} categories={this.state.categories} url={this.props.match.url} persons={this.props.persons} updateExpense={data => this.updateExpense(data)} />} />
+                    <div>Chargement en cours...</div>
+                 </div>
+             )
         }
 
         // INITIALISATION DE LA LOCALE POUR MOMENT JS
@@ -156,6 +163,9 @@ class ListExpenses extends Component {
         let shareBill;
 
         const persons = this.props.persons.map((person) =>  {
+            if (!person.expenses) {
+                person.expenses = [];
+            }
             let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
             console.log(total);
             // Calcul de la balance
@@ -175,25 +185,27 @@ class ListExpenses extends Component {
 
             // Calcul de la somme totale et de la somme que chacun doit régler
             const sum = valuesPaid.reduce((acc, curr) => curr + acc);
-            const mean = sum / people.length;
+            const share = sum / people.length;
 
             // Tri des personnes selon la grandeur de leur dette
             const sortedPeople = people.sort((personA, personB) => debt[personA] - debt[personB]);
-            const sortedValuesPaid = sortedPeople.map((person) => debt[person] - mean);
+            const sortedValuesPaid = sortedPeople.map((person) => debt[person] - share);
 
             let i = 0;
             let j = sortedPeople.length - 1;
             let payment;
 
             let debtState = [];
+            // while pour le calcul de qui doit combien à qui
             while (i < j) {
                 payment = Math.min(-(sortedValuesPaid[i]), sortedValuesPaid[j]);
                 sortedValuesPaid[i] += payment;
                 sortedValuesPaid[j] -= payment;
 
                 console.log(`${sortedPeople[i]} owes ${sortedPeople[j]} $${payment}`);
-                let debtTotal = `${sortedPeople[i]} doit ${(payment).toFixed(2)}€ à ${sortedPeople[j]}`;
+                let debtTotal = `${sortedPeople[i]} doit ${(payment).toLocaleString(undefined, { maximumFractionDigits: 2 })}€ à ${sortedPeople[j]}`;
 
+                // on stocke la dette dans un array pour pouvoir l'afficher plus tard
                 debtState.push(debtTotal);
 
                 if (sortedValuesPaid[i] === 0) {
@@ -204,20 +216,19 @@ class ListExpenses extends Component {
                     j--;
                 }
             }
+            // on donne la valeur de l'array à une constante extérieure à la fonction
             shareBill = debtState;
         }
-        console.log("hehehe");
-        console.log(shareBill);
-        console.log(this.state.categories);
+
         const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
+
+        // Affichage du partage des dépenses
         let share = '';
         if (shareBill) {
              share = shareBill.map((share, i) => <div key={i}>{share}</div>);
         } else {
              share = '';
         }
-
-
 
         return (
             <div>
@@ -228,11 +239,12 @@ class ListExpenses extends Component {
 
                 <div className="p-3 mb-2 mt-2 bg-info text-white">
                     Le total est <b>{(total).toLocaleString()} €</b>
-                    <div>Chacun devrait payer {shareExpense} €</div>
+                    <div className="mb-3">Chacun devrait payer {(shareExpense).toLocaleString()} €</div>
                     {share}
                 </div>
 
                 <Form>
+                    <h2>Trier les dépenses</h2>
                     <FormGroup>
                         <Label>Catégories</Label>
                         <Input type="select" onChange={event => this.handleFilters("category", event.target.value)} name="category">
@@ -248,7 +260,7 @@ class ListExpenses extends Component {
                         </Input>
                     </FormGroup>
                 </Form>
-
+                <hr/>
                 {expenses}
             </div>
         );

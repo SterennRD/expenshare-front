@@ -29,8 +29,8 @@ class FormShareGroup extends Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 alert('Nouveau groupe créé avec succès !');
+                this.handleOpen(event);
             })
             .catch(err => alert('Erreur lors de la création du groupe'))
         ;

@@ -73,6 +73,23 @@ class ShareGroup extends Component {
         this.setState({expenses: JSON.parse(data)});
     }
 
+    // ACTUALISER A L'AJOUT D'UNE PERSONNE
+    addPerson(data) {
+        let persons = this.state.persons;
+        persons.push(JSON.parse(data));
+        this.setState({persons: persons});
+    }
+
+    // ACTUALISER A LA SUPPRESSION D'UNE PERSONNE
+    deletePerson(id) {
+        this.setState(prevState=>{
+            const newPersons = prevState.persons.filter((person)=>person.id!==id);
+            return {
+                persons: newPersons
+            }
+        })
+    }
+
     render() {
 
         return (
@@ -83,7 +100,7 @@ class ShareGroup extends Component {
 
                 <Switch>
                     <Route exact path={`${this.props.match.path}`} render={()=><Charts persons={this.state.persons} expenses={this.state.expenses}/>} />
-                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id} />} />
+                    <Route path={`${this.props.match.path}/persons`} render={()=><ListPersons slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} id={this.state.group.id} addPerson={data => this.addPerson(data)} deletePerson={id => this.deletePerson(id)}/>} />
                     <Route path={`${this.props.match.path}/expenses`} render={props =><ListExpenses {...props} slug={this.props.match.params.id} expenses={this.state.expenses} persons={this.state.persons} updateExpense={data => this.updateExpense(data)} deleteExpense={id => this.deleteExpense(id)} addExpense={data => this.addExpense(data)}/>} />
                 </Switch>
 
