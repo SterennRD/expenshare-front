@@ -14,13 +14,6 @@ class ListPersons extends Component {
 
     }
 
-    // componentDidMount() {
-    //     fetch('http://localhost/dcdev/php/expenshare/public/person/group/' + this.props.slug)
-    //         .then(response => response.json())
-    //         .then(data => this.setState({ persons: data }))
-    //     ;
-    // }
-
     // CHANGEMENT DU STATE A LA MODIF DU INPUT
     handleChange(event) {
         this.setState({
@@ -57,14 +50,6 @@ class ListPersons extends Component {
         ;
     }
 
-    // ACTUALISER A L'AJOUT D'UNE PERSONNE
-    // addPerson(data) {
-    //     let persons = this.state.persons;
-    //     persons.push(JSON.parse(data));
-    //     this.setState({persons: persons});
-    //     this.props.addPerson(data);
-    // }
-
     // FONCTION SUPPRIMER
     handleDelete(id) {
         let confirm = window.confirm("Voulez-vous vraiment supprimer l'utilisateur ?");
@@ -86,17 +71,6 @@ class ListPersons extends Component {
 
         }
     }
-
-    // ACTUALISER A LA SUPPRESSION D'UNE PERSONNE
-    // deletePerson(id) {
-    //     this.setState(prevState=>{
-    //         const newPersons = prevState.persons.filter((person)=>person.id!==id);
-    //         return {
-    //             persons: newPersons
-    //         }
-    //     })
-    // }
-
 
     render() {
 
