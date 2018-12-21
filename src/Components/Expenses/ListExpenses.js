@@ -146,16 +146,78 @@ class ListExpenses extends Component {
                 <Button id={expense.id} onClick={(e) => this.handleDelete(e.target.id)} className="align-self-center ml-2" color="danger">Supprimer</Button>
             </div>);
 
-
-        const persons = this.props.persons.map((person) => <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>);
-        const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
-
-        // AFFICHAGE DU TOTAL DES DEPENSES
+        // PREPARATION DES VARIABLES POUR LE CALCUL DU PARTAGE DES DEPENSES
         let total = 0;
         for (let i = 0; i < this.props.expenses.length; i++) {
             total += parseFloat(this.props.expenses[i].amount);
         }
-        const shareExpense = (total / this.props.persons.length).toLocaleString();
+        const shareExpense = (total / this.props.persons.length).toFixed(2);
+        let debt = {};
+        let shareBill;
+
+        const persons = this.props.persons.map((person) =>  {
+            let total = person.expenses.reduce((accumulator, expense) => accumulator + parseFloat(expense.amount), 0);
+            console.log(total);
+            // Calcul de la balance
+            let balance = total - shareExpense;
+            // Préparation de l'objet dette
+            let debtName = person.firstname + ' ' + person.lastname;
+            debt[debtName] = balance;
+            return <option key={person.id} value={person.id}>{person.firstname + ' ' + person.lastname}</option>
+        });
+
+        // Quand l'objet dette est rempli, on lance la fonction
+        if (Object.keys(debt).length == this.props.persons.length && Object.keys(debt).length != 0 && this.props.persons.length != 0) {
+
+            // Séparation des clés et des valeurs
+            const people = Object.keys(debt);
+            const valuesPaid = Object.values(debt);
+
+            // Calcul de la somme totale et de la somme que chacun doit régler
+            const sum = valuesPaid.reduce((acc, curr) => curr + acc);
+            const mean = sum / people.length;
+
+            // Tri des personnes selon la grandeur de leur dette
+            const sortedPeople = people.sort((personA, personB) => debt[personA] - debt[personB]);
+            const sortedValuesPaid = sortedPeople.map((person) => debt[person] - mean);
+
+            let i = 0;
+            let j = sortedPeople.length - 1;
+            let payment;
+
+            let debtState = [];
+            while (i < j) {
+                payment = Math.min(-(sortedValuesPaid[i]), sortedValuesPaid[j]);
+                sortedValuesPaid[i] += payment;
+                sortedValuesPaid[j] -= payment;
+
+                console.log(`${sortedPeople[i]} owes ${sortedPeople[j]} $${payment}`);
+                let debtTotal = `${sortedPeople[i]} doit ${(payment).toFixed(2)}€ à ${sortedPeople[j]}`;
+
+                debtState.push(debtTotal);
+
+                if (sortedValuesPaid[i] === 0) {
+                    i++;
+                }
+
+                if (sortedValuesPaid[j] === 0) {
+                    j--;
+                }
+            }
+            shareBill = debtState;
+        }
+        console.log("hehehe");
+        console.log(shareBill);
+        console.log(this.state.categories);
+        const categories = this.state.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>);
+        let share = '';
+        if (shareBill) {
+             share = shareBill.map((share, i) => <div key={i}>{share}</div>);
+        } else {
+             share = '';
+        }
+
+
 
         return (
             <div>
@@ -167,6 +229,7 @@ class ListExpenses extends Component {
                 <div className="p-3 mb-2 mt-2 bg-info text-white">
                     Le total est <b>{(total).toLocaleString()} €</b>
                     <div>Chacun devrait payer {shareExpense} €</div>
+                    {share}
                 </div>
 
                 <Form>

@@ -96,7 +96,10 @@ class ListPersons extends Component {
         })
     }
 
+
     render() {
+
+        console.log(this.state.debt);
         // CALCUL DU TOTAL DES DEPENSES
         let total = 0;
         for (let i = 0; i < this.props.expenses.length; i++) {
@@ -104,8 +107,12 @@ class ListPersons extends Component {
         }
         const shareExpense = (total / this.state.persons.length).toFixed(2);
 
+        // PREPARATION DES VARIABLES POUR LE CALCUL DU PARTAGE DES DEPENSES
+        let debt = {};
+
         // AFFICHAGE DES PERSONNES
         const persons = this.state.persons.map(person => {
+
             if (!person.expenses) {
                 person.expenses = [];
             }
@@ -118,6 +125,7 @@ class ListPersons extends Component {
             } else {
                 balanceDisplay = <span className="text-danger"> {(balance).toLocaleString()} €</span>;
             }
+
             // Si il y a plus d'une dépense, on affiche un S
             let depense = "dépense";
             if (person.expenses.length > 1) {
@@ -132,6 +140,7 @@ class ListPersons extends Component {
                 </div>
             )
         });
+
 
         // CHARGEMENT DE LA PAGE
         if (this.state.persons.length === 0) {
