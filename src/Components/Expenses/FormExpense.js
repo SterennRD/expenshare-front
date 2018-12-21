@@ -63,7 +63,7 @@ class FormExpense extends Component {
         event.preventDefault();
 
         // Si la route se termine en "add", on envoie la requête en post
-        if (this.props.match.url.split("/").slice(-1)[0] == "add") {
+        if (this.props.edit != "true") {
             fetch('http://localhost/dcdev/php/expenshare/public/expense/', {
                 method: 'POST',
                 headers: {
@@ -117,7 +117,8 @@ class FormExpense extends Component {
 
         // Selon comment la route se termine, le titre affiche 'modifier' ou 'ajouter'
         let titre;
-        if (this.props.match.url.split("/").slice(-1)[0] == "edit") {
+
+        if (this.props.edit == "true") {
             titre = <h2>Editer une dépense</h2>;
         } else {
             titre = <h2>Ajouter une nouvelle dépense</h2>;
